@@ -66,10 +66,12 @@ public partial class App : System.Windows.Application
     private static System.Drawing.Icon? LoadEmbeddedIcon()
     {
         var asm = Assembly.GetExecutingAssembly();
-        var stream = asm.GetManifestResourceStream("HDRToggler.icon.HDRToggle.png");
+        var stream = asm.GetManifestResourceStream("HDRToggler.icon.HDRToggler.ico");
         if (stream is null) return null;
-        using var bmp = new System.Drawing.Bitmap(stream);
-        return System.Drawing.Icon.FromHandle(bmp.GetHicon());
+        var ms = new System.IO.MemoryStream();
+        stream.CopyTo(ms);
+        ms.Position = 0;
+        return new System.Drawing.Icon(ms);
     }
 
     protected override void OnExit(ExitEventArgs e)
