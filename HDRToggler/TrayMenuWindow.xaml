@@ -1,0 +1,102 @@
+<Window x:Class="HDRToggler.TrayMenuWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        ShowInTaskbar="False"
+        Topmost="True"
+        Deactivated="Window_Deactivated">
+
+    <Border CornerRadius="12" MinWidth="220">
+        <Border.Background>
+            <SolidColorBrush Color="#000000" Opacity="0.88"/>
+        </Border.Background>
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" Opacity="0.6"
+                              BlurRadius="24" ShadowDepth="4" Direction="270"/>
+        </Border.Effect>
+
+        <StackPanel Margin="6">
+
+            <!-- Monitor items -->
+            <ItemsControl x:Name="MonitorList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border x:Name="Row" CornerRadius="8" Padding="12,10"
+                                Cursor="Hand" MouseLeftButtonDown="MonitorItem_Click">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="#1AFFFFFF"/>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           Text="{Binding FriendlyName}"
+                                           Foreground="#CCFFFFFF" FontSize="13"
+                                           VerticalAlignment="Center"/>
+                                <Border Grid.Column="1" CornerRadius="4" Padding="6,2" Margin="12,0,0,0">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="#33FFFFFF"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HdrEnabled}" Value="True">
+                                                    <Setter Property="Background" Value="#2600FF87"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock FontSize="10" FontWeight="SemiBold">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text"       Value="OFF"/>
+                                                <Setter Property="Foreground" Value="#666666"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HdrEnabled}" Value="True">
+                                                        <Setter Property="Text"       Value="ON"/>
+                                                        <Setter Property="Foreground" Value="#00FF87"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <!-- Separator -->
+            <Border Height="1" Background="#1AFFFFFF" Margin="8,4"/>
+
+            <!-- Exit -->
+            <Border x:Name="ExitRow" CornerRadius="8" Padding="12,10"
+                    Cursor="Hand" MouseLeftButtonDown="ExitItem_Click">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1AFF3B3B"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="Exit" Foreground="#886666" FontSize="13"/>
+            </Border>
+
+        </StackPanel>
+    </Border>
+</Window>
