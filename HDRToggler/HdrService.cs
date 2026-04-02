@@ -2,7 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace HDRToggler;
 
-public record HdrMonitor(
+public record struct HdrMonitor(
     string FriendlyName,
     NativeMethods.LUID AdapterId,
     uint TargetId,
@@ -11,6 +11,10 @@ public record HdrMonitor(
 
 public static class HdrService
 {
+    private static readonly uint TargetDeviceNameSize = (uint)Marshal.SizeOf<NativeMethods.DISPLAYCONFIG_TARGET_DEVICE_NAME>();
+    private static readonly uint AdvancedColorInfoSize = (uint)Marshal.SizeOf<NativeMethods.DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO>();
+    private static readonly uint AdvancedColorStateSize = (uint)Marshal.SizeOf<NativeMethods.DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE>();
+
     // Fired after a toggle; source = the object that triggered it (used to skip self-refresh)
     public static event Action<object?>? StateChanged;
 
@@ -41,7 +45,7 @@ public static class HdrService
                 header = new NativeMethods.DISPLAYCONFIG_DEVICE_INFO_HEADER
                 {
                     type = NativeMethods.DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME,
-                    size = (uint)Marshal.SizeOf<NativeMethods.DISPLAYCONFIG_TARGET_DEVICE_NAME>(),
+                    size = TargetDeviceNameSize,
                     adapterId = path.targetAdapterId,
                     id = path.targetId,
                 }
@@ -57,7 +61,7 @@ public static class HdrService
                 header = new NativeMethods.DISPLAYCONFIG_DEVICE_INFO_HEADER
                 {
                     type = NativeMethods.DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO,
-                    size = (uint)Marshal.SizeOf<NativeMethods.DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO>(),
+                    size = AdvancedColorInfoSize,
                     adapterId = path.targetAdapterId,
                     id = path.targetId,
                 }
@@ -80,22 +84,25 @@ public static class HdrService
         return result;
     }
 
-    public static void SetHdr(HdrMonitor monitor, bool enabled, object? source = null)
+    public static bool SetHdr(HdrMonitor monitor, bool enabled, object? source = null)
     {
         var req = new NativeMethods.DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE
         {
             header = new NativeMethods.DISPLAYCONFIG_DEVICE_INFO_HEADER
             {
                 type = NativeMethods.DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE,
-                size = (uint)Marshal.SizeOf<NativeMethods.DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE>(),
+                size = AdvancedColorStateSize,
                 adapterId = monitor.AdapterId,
                 id = monitor.TargetId,
             },
             value = enabled ? 1u : 0u
         };
 
-        NativeMethods.DisplayConfigSetDeviceInfo(ref req);
+        if (NativeMethods.DisplayConfigSetDeviceInfo(ref req) != NativeMethods.ERROR_SUCCESS)
+            return false;
+
         StateChanged?.Invoke(source);
+        return true;
     }
 
     public static void ToggleHdr(HdrMonitor monitor, object? source = null)

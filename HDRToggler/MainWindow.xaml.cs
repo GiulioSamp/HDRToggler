@@ -30,7 +30,7 @@ public partial class MainWindow : Window
 
     private void Root_MouseDown(object sender, MouseButtonEventArgs e)
     {
-        if (e.ChangedButton == MouseButton.Left && e.Source == Root)
+        if (e.ChangedButton == MouseButton.Left && e.Source == Root && e.LeftButton == MouseButtonState.Pressed)
             DragMove();
     }
 

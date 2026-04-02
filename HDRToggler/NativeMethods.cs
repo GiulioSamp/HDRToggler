@@ -14,12 +14,6 @@ public static class NativeMethods
         DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE = 10,
     }
 
-    public enum DISPLAYCONFIG_MODE_INFO_TYPE : uint
-    {
-        DISPLAYCONFIG_MODE_INFO_TYPE_SOURCE = 1,
-        DISPLAYCONFIG_MODE_INFO_TYPE_TARGET = 2,
-    }
-
     [StructLayout(LayoutKind.Sequential)]
     public struct LUID
     {
@@ -50,7 +44,7 @@ public static class NativeMethods
     [StructLayout(LayoutKind.Explicit, Size = 64)]
     public struct DISPLAYCONFIG_MODE_INFO
     {
-        [FieldOffset(0)] public DISPLAYCONFIG_MODE_INFO_TYPE infoType;
+        [FieldOffset(0)] public uint infoType;
         [FieldOffset(4)] public uint id;
         [FieldOffset(8)] public LUID adapterId;
     }
@@ -94,13 +88,13 @@ public static class NativeMethods
         public string monitorDevicePath;
     }
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", ExactSpelling = true)]
     public static extern int GetDisplayConfigBufferSizes(
         uint flags,
         out uint numPathArrayElements,
         out uint numModeInfoArrayElements);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", ExactSpelling = true)]
     public static extern int QueryDisplayConfig(
         uint flags,
         ref uint numPathArrayElements,
@@ -109,15 +103,15 @@ public static class NativeMethods
         [Out] DISPLAYCONFIG_MODE_INFO[] modeInfoArray,
         IntPtr currentTopologyId);
 
-    [DllImport("user32.dll", EntryPoint = "DisplayConfigGetDeviceInfo")]
+    [DllImport("user32.dll", EntryPoint = "DisplayConfigGetDeviceInfo", ExactSpelling = true)]
     public static extern int DisplayConfigGetAdvancedColorInfo(
         ref DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO requestPacket);
 
-    [DllImport("user32.dll", EntryPoint = "DisplayConfigGetDeviceInfo")]
+    [DllImport("user32.dll", EntryPoint = "DisplayConfigGetDeviceInfo", ExactSpelling = true)]
     public static extern int DisplayConfigGetTargetName(
         ref DISPLAYCONFIG_TARGET_DEVICE_NAME requestPacket);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", ExactSpelling = true)]
     public static extern int DisplayConfigSetDeviceInfo(
         ref DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE setPacket);
 }

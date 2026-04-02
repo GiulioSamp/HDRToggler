@@ -7,6 +7,7 @@ public partial class TrayMenuWindow : Window
 {
     private readonly Action _onExit;
     private List<HdrMonitor> _monitors;
+    private bool _closing;
 
     public TrayMenuWindow(Action onExit)
     {
@@ -60,9 +61,14 @@ public partial class TrayMenuWindow : Window
 
     private void ExitItem_Click(object sender, MouseButtonEventArgs e)
     {
+        _closing = true;
         Close();
         _onExit();
     }
 
-    private void Window_Deactivated(object sender, EventArgs e) => Close();
+    private void Window_Deactivated(object sender, EventArgs e)
+    {
+        if (!_closing)
+            Close();
+    }
 }

@@ -24,10 +24,11 @@ Existing tools like *Quick HDR* only support the primary monitor.
 
 ## Usage
 
-Run `HDRToggler.exe`. The app starts minimized to the system tray, no window appears on launch.
+Run `HDRToggler.exe`. The monitor panel opens immediately on launch.
 
 | Action | Result |
 |---|---|
+| Double-click exe | Opens the monitor panel |
 | Left-click tray icon | Opens the monitor panel |
 | Click a monitor box | Toggles HDR on that display |
 | Right-click tray icon | Opens the quick-access menu |

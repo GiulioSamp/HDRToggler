@@ -25,6 +25,8 @@ public partial class App : System.Windows.Application
         };
 
         _trayIcon.MouseClick += TrayIcon_MouseClick;
+
+        OpenMainWindow();
     }
 
     private void TrayIcon_MouseClick(object? sender, MouseEventArgs e)
@@ -57,27 +59,19 @@ public partial class App : System.Windows.Application
 
     private void DoExit()
     {
-        _appIcon?.Dispose();
+        // Hide tray icon immediately for instant visual feedback
         _trayIcon.Visible = false;
         _trayIcon.Dispose();
+        _appIcon?.Dispose();
         Shutdown();
     }
 
     private static System.Drawing.Icon? LoadEmbeddedIcon()
     {
         var asm = Assembly.GetExecutingAssembly();
-        var stream = asm.GetManifestResourceStream("HDRToggler.icon.HDRToggler.ico");
+        using var stream = asm.GetManifestResourceStream("HDRToggler.icon.HDRToggler.ico");
         if (stream is null) return null;
-        var ms = new System.IO.MemoryStream();
-        stream.CopyTo(ms);
-        ms.Position = 0;
-        return new System.Drawing.Icon(ms);
+        return new System.Drawing.Icon(stream);
     }
 
-    protected override void OnExit(ExitEventArgs e)
-    {
-        _appIcon?.Dispose();
-        _trayIcon.Dispose();
-        base.OnExit(e);
-    }
 }
