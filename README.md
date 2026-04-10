@@ -4,7 +4,7 @@ A lightweight Windows system tray utility that lets you toggle HDR on and off **
 
 ## The problem
 
-Windows 10 and 11 only allow toggling HDR globally, if you enable it, it turns on for every display at once. This is frustrating in multi-monitor setups where you have one HDR-capable screen alongside one that is not, or where you simply want HDR active only for specific content on a specific display.
+Windows 10 and 11 Xbox Gamebar button combo (Win+Alt+B) only allow toggling HDR globally, if you enable it, it turns on for every display at once. This is frustrating in multi-monitor setups where you have one HDR-capable screen alongside one that is not, or where you simply want HDR active only for specific content on a specific display.
 
 Existing tools like *Quick HDR* only support the primary monitor.
 
