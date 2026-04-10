@@ -38,9 +38,7 @@ public partial class App : System.Windows.Application
         else if (e.Button == MouseButtons.Right)
         {
             var menu = new TrayMenuWindow(DoExit);
-            menu.PositionNearCursor();
-            menu.Show();
-            menu.Activate();
+            menu.ShowNearCursor();
         }
     }
 

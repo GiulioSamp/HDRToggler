@@ -31,19 +31,50 @@ public partial class TrayMenuWindow : Window
         });
     }
 
-    public void PositionNearCursor()
+    /// <summary>
+    /// Snapshot cursor position now; actual repositioning happens in Loaded
+    /// once the window has a PresentationSource and a real rendered size.
+    /// </summary>
+    public void ShowNearCursor()
     {
-        Measure(new System.Windows.Size(double.PositiveInfinity, double.PositiveInfinity));
-        Arrange(new System.Windows.Rect(DesiredSize));
+        _cursorSnapshot = System.Windows.Forms.Cursor.Position;
 
-        var cursor = System.Windows.Forms.Cursor.Position;
-        var area   = SystemParameters.WorkArea;
+        // Start off-screen so nothing flickers
+        Left = -10000;
+        Top  = -10000;
+        Show();
+        Activate();
+    }
 
-        double x = cursor.X - DesiredSize.Width;
-        double y = cursor.Y - DesiredSize.Height - 8;
+    private System.Drawing.Point _cursorSnapshot;
 
-        Left = Math.Max(0, Math.Min(x, area.Right  - DesiredSize.Width));
-        Top  = Math.Max(0, Math.Min(y, area.Bottom - DesiredSize.Height));
+    protected override void OnContentRendered(EventArgs e)
+    {
+        base.OnContentRendered(e);
+
+        var source = PresentationSource.FromVisual(this);
+        if (source?.CompositionTarget is null) return;
+
+        // TransformFromDevice converts physical device pixels → WPF logical units
+        var transform = source.CompositionTarget.TransformFromDevice;
+
+        var cursor = _cursorSnapshot;
+        var screen = System.Windows.Forms.Screen.FromPoint(cursor);
+        var work   = screen.WorkingArea; // physical pixels, excludes taskbar
+
+        var curLogical  = transform.Transform(new System.Windows.Point(cursor.X, cursor.Y));
+        var workTopLeft = transform.Transform(new System.Windows.Point(work.Left, work.Top));
+        var workBotRight = transform.Transform(new System.Windows.Point(work.Right, work.Bottom));
+
+        double w = ActualWidth;
+        double h = ActualHeight;
+
+        // Prefer placing above & left of cursor
+        double x = curLogical.X - w;
+        double y = curLogical.Y - h - 8;
+
+        Left = Math.Max(workTopLeft.X, Math.Min(x, workBotRight.X - w));
+        Top  = Math.Max(workTopLeft.Y, Math.Min(y, workBotRight.Y - h));
     }
 
     private void MonitorItem_Click(object sender, MouseButtonEventArgs e)

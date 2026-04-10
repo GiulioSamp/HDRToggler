@@ -114,4 +114,5 @@ public static class NativeMethods
     [DllImport("user32.dll", ExactSpelling = true)]
     public static extern int DisplayConfigSetDeviceInfo(
         ref DISPLAYCONFIG_SET_ADVANCED_COLOR_STATE setPacket);
+
 }
